@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/mongoose";
 import { Transaction, Account, AIAnomaly } from "@/models";
 import { DashboardClient } from "./DashboardClient";
+import { aiService } from "@/services/ai.service";
 
 export const dynamic = 'force-dynamic';
 
@@ -47,6 +48,34 @@ export default async function DashboardPage() {
 
   const chartData = Object.values(monthlyData);
 
+  // Generate AI Insights and Forecasts
+  // In a real app we'd calculate current vs last month accurately from transactions
+  let currentMonthRevenue = 0;
+  let lastMonthRevenue = 0;
+  let currentMonthExpense = 0;
+  let lastMonthExpense = 0;
+  
+  if (chartData.length >= 2) {
+    const current = chartData[chartData.length - 1];
+    const previous = chartData[chartData.length - 2];
+    currentMonthRevenue = current.revenue;
+    lastMonthRevenue = previous.revenue;
+    currentMonthExpense = current.expense;
+    lastMonthExpense = previous.expense;
+  }
+
+  const aiInsight = await aiService.generateFinancialInsights({
+    currentMonthRevenue,
+    lastMonthRevenue,
+    currentMonthExpense,
+    lastMonthExpense
+  });
+
+  let aiForecast = null;
+  if (chartData.length >= 3) {
+    aiForecast = await aiService.forecastFinancialMetrics(chartData);
+  }
+
   return (
     <DashboardClient 
       totalRevenue={totalRevenue}
@@ -55,6 +84,8 @@ export default async function DashboardPage() {
       cashBalance={cashBalance}
       anomalies={JSON.parse(JSON.stringify(anomalies))}
       chartData={chartData}
+      aiInsight={aiInsight}
+      aiForecast={aiForecast}
     />
   );
 }

@@ -81,3 +81,31 @@ export async function approveInvoice(invoiceId: string) {
     return { success: false, error: error.message };
   }
 }
+
+export async function createManualInvoice(data: any) {
+  try {
+    await dbConnect();
+    const invoice = new Invoice({
+      invoiceNumber: data.invoiceNumber,
+      type: 'PAYABLE',
+      date: data.date,
+      dueDate: new Date(new Date(data.date).getTime() + 30 * 24 * 60 * 60 * 1000),
+      subtotal: data.subtotal,
+      taxAmount: data.taxAmount,
+      totalAmount: data.subtotal + data.taxAmount,
+      status: 'PENDING',
+      description: data.description || 'Manual Entry',
+      items: [],
+      aiConfidence: 0, // 0 signifies manual entry
+      validationStatus: 'MANUAL_ENTRY'
+    });
+
+    await invoice.save();
+    
+    revalidatePath('/invoices');
+    return { success: true, invoice: JSON.parse(JSON.stringify(invoice)) };
+  } catch (error: any) {
+    console.error('Error creating manual invoice:', error);
+    return { success: false, error: error.message };
+  }
+}

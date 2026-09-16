@@ -59,37 +59,63 @@ class AIService {
    * In a real implementation, this would call AWS Textract, Google Document AI, or OpenAI.
    */
   public async extractInvoice(fileBuffer: Buffer, fileName: string): Promise<ExtractInvoiceResult> {
-    // Simulating processing delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      if (!fileBuffer || fileBuffer.length === 0) {
+        throw new Error('File buffer is empty or corrupted. Please use the manual entry fallback.');
+      }
 
-    // Generate pseudo-random deterministic data based on filename length
-    const rand = (fileName.length % 10) + 1;
-    const subtotal = 1000 * rand;
-    const tax = subtotal * 0.18; // 18% GST
+      if (fileBuffer.length > 5 * 1024 * 1024) {
+        throw new Error('File size exceeds the 5MB limit. Please compress the file or use manual entry.');
+      }
 
-    return {
-      vendorName: 'Acme Cloud Services Ltd',
-      invoiceNumber: `INV-${Math.floor(Math.random() * 10000)}`,
-      invoiceDate: new Date(),
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later
-      gstin: '27AADCB2230M1Z2',
-      subtotal: subtotal,
-      cgst: tax / 2,
-      sgst: tax / 2,
-      igst: 0,
-      totalTax: tax,
-      grandTotal: subtotal + tax,
-      paymentTerms: 'Net 30',
-      lineItems: [
-        {
-          description: 'Cloud Compute Instance (August)',
-          quantity: 1,
-          unitPrice: subtotal,
-          totalAmount: subtotal,
-        },
-      ],
-      confidenceScore: 0.92,
-    };
+      const validExtensions = ['.pdf', '.png', '.jpg', '.jpeg'];
+      const fileExt = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+      if (!validExtensions.includes(fileExt)) {
+        throw new Error(`Unsupported file format: ${fileExt}. Please upload a PDF or image, or use manual entry.`);
+      }
+
+      // Simulating processing delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Simulate occasional AI extraction failure (e.g. low quality scan)
+      // We'll use the file size modulo 10 to pseudo-randomly determine failure.
+      // If it ends in 7, we simulate a failure.
+      if (fileBuffer.length % 10 === 7) {
+        throw new Error('AI extraction failed due to low image quality or unreadable text. Please use manual entry.');
+      }
+
+      // Generate pseudo-random deterministic data based on filename length
+      const rand = (fileName.length % 10) + 1;
+      const subtotal = 1000 * rand;
+      const tax = subtotal * 0.18; // 18% GST
+
+      return {
+        vendorName: 'Acme Cloud Services Ltd',
+        invoiceNumber: `INV-${Math.floor(Math.random() * 10000)}`,
+        invoiceDate: new Date(),
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later
+        gstin: '27AADCB2230M1Z2',
+        subtotal: subtotal,
+        cgst: tax / 2,
+        sgst: tax / 2,
+        igst: 0,
+        totalTax: tax,
+        grandTotal: subtotal + tax,
+        paymentTerms: 'Net 30',
+        lineItems: [
+          {
+            description: 'Cloud Compute Instance (August)',
+            quantity: 1,
+            unitPrice: subtotal,
+            totalAmount: subtotal,
+          },
+        ],
+        confidenceScore: 0.92,
+      };
+    } catch (error: any) {
+      console.error('[AI Service Error]:', error.message);
+      throw error; // Re-throw so the caller can catch and display to user
+    }
   }
 
   /**

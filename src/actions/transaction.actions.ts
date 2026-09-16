@@ -62,3 +62,23 @@ export async function approveTransaction(transactionId: string) {
     return { success: false, error: error.message };
   }
 }
+
+export async function deleteTransaction(transactionId: string) {
+  try {
+    await dbConnect();
+    const transaction = await Transaction.findByIdAndDelete(transactionId);
+    if (!transaction) throw new Error('Transaction not found');
+    
+    if (transaction.status === 'COMPLETED') {
+       // Reverse accounting
+       // await accountingService.reverseTransaction(transaction._id.toString());
+    }
+
+    revalidatePath('/transactions');
+    revalidatePath('/dashboard');
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
