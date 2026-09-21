@@ -252,3 +252,10 @@ Open **http://localhost:3000** in your browser.
 **Batch:** Batch 2  
 **Course:** Internal Assessment Project  
 **Academic Year:** 2026
+
+---
+
+<p align="center">
+  <b>Developed by Abhishek Kulbainur</b>
+</p>
+
