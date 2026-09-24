@@ -76,7 +76,7 @@ Traditional enterprise bookkeeping is hindered by manual data entry, human error
 | Category | Technologies |
 |---|---|
 | **Frontend** | [Next.js 16](https://nextjs.org/) (App Router), [React 19](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Recharts 3](https://recharts.org/), [Lucide React](https://lucide.dev/), [Sonner](https://sonner.emilkowal.ski/) |
-| **Backend** | Next.js Server Actions (`"use server"`), Node.js, [NextAuth.js](https://next-auth.js.org/) (JWT sessions), [Bcryptjs](https://www.npmjs.com/package/bcryptjs) |
+| **Backend** | Next.js Server Actions (`"use server"`), Node.js, Java, [NextAuth.js](https://next-auth.js.org/) (JWT sessions), [Bcryptjs](https://www.npmjs.com/package/bcryptjs) |
 | **Database** | [MongoDB](https://www.mongodb.com/) with [Mongoose 9](https://mongoosejs.com/) (Atomic transaction sessions, full relation modeling) |
 | **AI / Statistics** | Z-Score Anomaly Outlier Detection ($Z = \frac{X - \mu}{\sigma}$), 3-Month Simple Moving Average (SMA) Forecasting, Rule-based Categorization, Document Extraction Abstraction |
 | **Tools & Language** | TypeScript 5 (Strict mode), TSX/TS-Node, ESLint 9 |
